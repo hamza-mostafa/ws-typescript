@@ -18,6 +18,8 @@ const UserSchema = new Schema({
     }
 });
 
+UserSchema.index({name: "id", userId: 1})
+
 UserSchema.statics.findByChannel = findByChannel;
 UserSchema.statics.findByUserId = findByUserId;
 UserSchema.statics.findByEmail = findByEmail;

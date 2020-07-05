@@ -1,5 +1,6 @@
 import { UserModel } from "../users/users.model";
 import { connect, disconnect } from "../database";
+import {MessageModel} from "../messages/messages.model";
 
 
 (async () => {
@@ -20,10 +21,36 @@ import { connect, disconnect } from "../database";
                      "219df8fe-4c7f-4610-90b6-9718a4f8cbff",
                      "308ad828-aa86-47f9-a5f9-8e8f218ab2bf"], userId: "f245b901-4704-423a-b463-9ca7972cb8b5" }
          ];
+         const messages = [
+             {
+                 fromUserId: 'f245b901-4704-423a-b463-9ca7972cb8b5',
+                 toUserIds: [
+                     "03ff9a7d-d962-4546-8ca6-fc3cb77a78b4",
+                     "dfea71ac-d605-4cd5-9b85-ede973dc7106",
+                     "97d6b716-e832-4a96-b849-031321b6493e"
+                 ],
+                 channelsId: [
+                     "d65ba96b-4651-4faf-b592-f41f4fe2b403",
+                     "219df8fe-4c7f-4610-90b6-9718a4f8cbff"
+                 ],
+                body: 'that should be a long Lorem Ipsum',
+                type: 'text',
+    seen: [
+        {id: "03ff9a7d-d962-4546-8ca6-fc3cb77a78b4", status: true},
+        {id: "dfea71ac-d605-4cd5-9b85-ede973dc7106", status: false},
+        {id: "97d6b716-e832-4a96-b849-031321b6493e", status: false},
+        ],
+    acknowledged: [
+        {id: "03ff9a7d-d962-4546-8ca6-fc3cb77a78b4", status: true},
+        {id: "dfea71ac-d605-4cd5-9b85-ede973dc7106", status: true},
+        {id: "97d6b716-e832-4a96-b849-031321b6493e", status: false},
+        ]
+         }];
          try {
              for (let user of users) {
                  // @ts-ignore
-                 await UserModel.create(user);
+                 await UserModel.create(users);
+                 await MessageModel.create(messages);
                  console.log(`Created user ${user.firstName} ${user.lastName}`);
              }
              disconnect();

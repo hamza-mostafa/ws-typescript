@@ -6,8 +6,8 @@ export interface IMessage {
     channelsId: string[]|boolean;
     body: string;
     type: MessageType;
-    seen: actionStatus;
-    acknowledged: actionStatus;
+    seen: actionStatus[];
+    acknowledged: actionStatus[];
     dateOfEntry?: Date;
     lastUpdated?: Date;
 }

@@ -10,14 +10,14 @@ const MessageSchema = new Schema({
     fromUserId: String,
     toUserIds: Array,
     channelsId: Array,
-    body: String,
+    body: Text,
     type: {
         type: String,
         enum : ['text','voice','video'],
         default: 'text'
     },
-    seen: {id: String, status: Boolean},
-    acknowledged: {id: String, status: Boolean},
+    seen: [{id: String, status: Boolean}],
+    acknowledged: [{id: String, status: Boolean}],
     dateOfEntry: {
         type: Date,
         default: new Date()
@@ -27,6 +27,9 @@ const MessageSchema = new Schema({
         default: new Date()
     },
 });
+
+MessageSchema.index({name: "body", body: 'text'})
+MessageSchema.index({name: "id", messageId: 1})
 
 MessageSchema.statics.findBySenderId = findBySenderId;
 MessageSchema.statics.findByMessageId = findByMessageId

@@ -7,10 +7,6 @@ express typescript using ws library and mongodb
 
 [true] has channels private conversations
 
-[false] unit testing
-
-[false] bdd
-
 [inProcess] seen status
 
 [inProcess] acknowledgement
@@ -26,3 +22,7 @@ express typescript using ws library and mongodb
 [false] xmpp
 
 [false] redis?
+
+[false] unit testing
+
+[false] bdd
