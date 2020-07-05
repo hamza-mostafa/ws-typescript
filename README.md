@@ -7,6 +7,10 @@ express typescript using ws library and mongodb
 
 [true] has channels private conversations
 
+[false] unit testing
+
+[false] bdd
+
 [false] seen status
 
 [false] acknowledgement
