@@ -3,7 +3,7 @@ express typescript using ws library and mongodb
 
 [true] has private conversations
 
-[true] has channels
+[true] has channels x
 
 [true] has channels private conversations
 
@@ -11,12 +11,18 @@ express typescript using ws library and mongodb
 
 [false] bdd
 
-[false] seen status
+[inProcess] seen status
 
-[false] acknowledgement
+[inProcess] acknowledgement
+
+[inProcess] simple search by date
+
+[inProcess] simple search by text
 
 [false] upload images
 
 [false] upload audio
 
 [false] xmpp
+
+[false] redis?

@@ -6,8 +6,6 @@ import { connect, disconnect } from "./database/database";
 import {IUserDocument} from "./database/users/users.types";
 
 
-
-
 const app = express();
 
 const PORT = process.env.PORT || 8989;
