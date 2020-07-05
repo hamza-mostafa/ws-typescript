@@ -1,29 +1,5 @@
 import { IMessageDocument, IMessageModel } from "./messages.types";
 
-export async function findByUserId(this: IMessageModel, userId: string): Promise<IMessageDocument|null> {
-    return this.findOne({ userId });
-}
-
-export async function findByEmail(
-    this: IMessageModel,
-    email: string
-): Promise<IMessageDocument|null> {
-    return this.findOne({ email });
-}
-
-export async function findByChannel(
-    this: IMessageModel,
-    channelId: string,
-): Promise<IMessageDocument[]> {
-    return this.find({ "channelsId": channelId });
-}
-export async function getChannels(
-    this: IMessageModel,
-    userId: string
-): Promise<IMessageDocument[]> {
-    return this.find({ "userId": userId });
-}
-
 export async function findBySenderId(
     this: IMessageModel,
     userId: string
@@ -63,5 +39,56 @@ export async function getUserAcknowledgeId(
     status: string,
     userId: string
 ): Promise<IMessageDocument[]>{
-    return this.find({fromUserId: userId, "seen.status": status})
+    return this.find({fromUserId: userId, "acknowledged.status": status})
+}
+export async function getByChannelId(
+    this: IMessageModel,
+    channelId: string[]|string,
+    userId: string
+): Promise<IMessageDocument[]>{
+    return this.find({fromUserId: userId, channelsId: { $in: Array.isArray(channelId)? channelId: [channelId]}})
+}
+export async function getByDate(
+    this: IMessageModel,
+    userId: string,
+    min?: Date,
+    max?: Date,
+    exact?: Date
+): Promise<IMessageDocument[]>{
+    return this.aggregate([{
+        $match: {
+            $and: [
+                {fromUserId: userId},
+                {
+                    dateOfEntry: {
+                    $or: [
+                        {$lte: max},
+                        {$gte: min},
+                        {$match: exact}
+                        ]
+                    }
+                }
+            ]}
+    }, ])
+}
+export async function getByDateRange(
+    this: IMessageModel,
+    userId: string,
+    min: Date,
+    max: Date,
+): Promise<IMessageDocument[]>{
+    return this.aggregate([{
+        $match: {
+            $and: [
+                {fromUserId: userId},
+                {
+                    dateOfEntry: {
+                    $and: [
+                        {$lte: max},
+                        {$gte: min}
+                        ]
+                    }
+                }
+            ]}
+    }, ])
 }

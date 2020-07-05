@@ -1,7 +1,10 @@
 import { Schema } from "mongoose";
 import { setLastUpdated } from "./messages.methods";
-import {getChannels, findByChannel, findByUserId, findByEmail} from "./messages.statics"
-import { MessageType, actionStatus} from "./messages.types";
+import {
+    findBySenderId, findByMessageId, getByChannelId,
+    getStatus, findByReceivers,getByDate, getByDateRange,
+    getUserSeenId, getUserAcknowledgeId
+} from "./messages.statics"
 
 const MessageSchema = new Schema({
     fromUserId: String,
@@ -24,6 +27,18 @@ const MessageSchema = new Schema({
         default: new Date()
     },
 });
+
+MessageSchema.statics.findBySenderId = findBySenderId;
+MessageSchema.statics.findByMessageId = findByMessageId
+MessageSchema.statics.getByChannelId = getByChannelId
+MessageSchema.statics.getStatus = getStatus
+MessageSchema.statics.findByReceivers = findByReceivers
+MessageSchema.statics.getUserSeenId = getUserSeenId
+MessageSchema.statics.getUserAcknowledgeId = getUserAcknowledgeId
+MessageSchema.statics.getByDateRange = getByDateRange
+MessageSchema.statics.getByDate = getByDate
+
+MessageSchema.methods.setLastUpdated = setLastUpdated
 
 
 export default MessageSchema;
