@@ -9,7 +9,7 @@
       "node_modules/@types"
     ]
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts", "src/*.ts"],
   "exclude": [
     "dist",
     "node_modules"

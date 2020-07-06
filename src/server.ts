@@ -4,6 +4,7 @@ import * as WebSocket from "ws";
 import { UserModel } from "./database/users/users.model";
 import { connect, disconnect } from "./database/database";
 import {IUserDocument} from "./database/users/users.types";
+import {receivedMessage} from "./general.types"
 
 
 const app = express();
@@ -12,11 +13,10 @@ const PORT = process.env.PORT || 8989;
 
 const server = http.createServer();
 
-
+// need to add the try and catch for each that have at least 2 types
 const wsServer = new WebSocket.Server({server, clientTracking: true});
 server.on('upgrade', (request, socket, head) => {
     connect();
-    console.log('working')
 
     wsServer.on('connection', async(ws) => {
         // @ts-ignore
@@ -25,46 +25,36 @@ server.on('upgrade', (request, socket, head) => {
         (ws as any).id = userId;
         ws.send(JSON.stringify({connectionId: userId}));
         ws.on('message',async (message: string) =>{
-            let messageR: {
-                body: string,
-                channelId:string|boolean|any,
-                receiverId: string|boolean,
-                broadcast: boolean
-            }  = JSON.parse(message)
+            let messageReceived: receivedMessage = JSON.parse(message)
 
-
-            if(messageR.broadcast){
-                console.log('broadcast')
+            if(messageReceived.broadcast){
                 wsServer.clients.forEach(x => {
                     x.send(JSON.stringify({acknowledged: 'channel broadcast true'}))
                 })
             }else{
-                console.log('channels and private')
-               if(messageR.channelId){
+               if(messageReceived.channelId){
                    // channels
-                   console.log('channels')
-                   let ch: string = messageR.channelId as string;
+                   let ch: string = messageReceived.channelId as string;
                    let senderRegisteredChannels:IUserDocument[] = await UserModel.getChannels(userId)
-                   let receiverRegisteredChannels:IUserDocument[] = await UserModel.getChannels(messageR.receiverId as string)
+                   let receiverRegisteredChannels:IUserDocument[]|boolean = (typeof messageReceived.receiverId === 'boolean')?false:await UserModel.getChannels(messageReceived.receiverId);
 
-                   if(messageR.receiverId) {
-                       console.log(senderRegisteredChannels);
+                   if(messageReceived.receiverId) {
                        // channel private
-                       // @ts-ignore
-                       if ((senderRegisteredChannels as unknown as string[])[0].channelsId.filter(
-                           // @ts-ignore
-                           (y: string) => (receiverRegisteredChannels as unknown as string[])[0].channelsId.includes(y))) {
+                       let includedInListOfChannels = (typeof (senderRegisteredChannels)[0].channelsId === "boolean")?
+                           false : ((senderRegisteredChannels)[0].channelsId).filter(
+                               // @ts-ignore
+                           (y: string) => ((receiverRegisteredChannels)[0].channelsId as string[]).includes(y));
+                       if (includedInListOfChannels) {
                            wsServer.clients.forEach((x: WebSocket) => {
                                // @ts-ignore
-                               if (x.id == messageR.receiverId) {
+                               if (x.id == messageReceived.receiverId) {
                                    x.send('you have received a private message from ' + userId+' on channel '+ch)
                                }
                            })
                        }
                    }else{
-                       console.log('channels public')
                        // channel public
-                       let concernedUsers:IUserDocument[] = await UserModel.findByChannel(messageR.channelId);
+                       let concernedUsers:IUserDocument[] = await UserModel.findByChannel(messageReceived.channelId);
                        let x = await UserModel.find()
                        concernedUsers.forEach(
                            (x:IUserDocument) =>{
@@ -79,14 +69,11 @@ server.on('upgrade', (request, socket, head) => {
                    }
                // end of channels
                }else{
-                   console.log('private conversation')
                    // private conversation
                    wsServer.clients.forEach((x:WebSocket) =>{
                        // @ts-ignore
-                       console.log(x.id)
-                           // @ts-ignore
-                           x.id === messageR.receiverId?
-                               x.send(JSON.stringify({body: messageR.body, senderId: userId})):''
+                           x.id === messageReceived.receiverId?
+                               x.send(JSON.stringify({body: messageReceived.body, senderId: userId})):''
                    });
                }
             }
