@@ -4,7 +4,6 @@ import { UserModel } from "./database/users/users.model";
 import { connect, disconnect } from "./database/database";
 import {IUserDocument} from "./database/users/users.types";
 import {receivedMessage} from "./general.types"
-import {AdjustedServer} from "./HelperClasses/WebSocketServerAdapter";
 
 
 const PORT = process.env.PORT || 8989;
@@ -71,7 +70,7 @@ server.listen(PORT, () => {
     console.log(`Server start on port ${PORT} `)
 });
 
-function fetcherSender(server: AdjustedServer, rid: string, message: string){
+function fetcherSender(server: WebSocketServerAdapter.AdjustedServer, rid: string, message: string){
     let x:WebSocketServerAdapter | undefined = server.clientsMapped.get(rid as string);
     if(x !== undefined){
         x.send(message)
