@@ -11,6 +11,8 @@ express typescript using ws library and mongodb
 
 [inProcess] acknowledgement
 
+[inProcess] online status
+
 [inProcess] simple search by date
 
 [inProcess] simple search by text
